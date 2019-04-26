@@ -66,7 +66,7 @@ public class MailPool implements IMailPool {
         } 
 	}
 	//TODO: optimise code a little, i.e. robots shouldnt stay waiting if next item is heavy and other robots are
-	//		far away.
+	//		far away. wow
 	private void loadRobot(ListIterator<Robot> i) throws ItemTooHeavyException {
 		Robot robot = i.next();
 		assert(robot.isEmpty());

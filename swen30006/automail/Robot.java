@@ -63,7 +63,7 @@ public class Robot {
      * This is called on every time step
      * @throws ExcessiveDeliveryException if robot delivers more than the capacity of the tube without refilling
      */
-    //TODO: stop duplicating items delivered
+    //TODO: stop duplicating items delivered wow
     public void step() throws ExcessiveDeliveryException {    	
     	switch(current_state) {
     		/** This state is triggered when the robot is returning to the mailroom after a delivery */
