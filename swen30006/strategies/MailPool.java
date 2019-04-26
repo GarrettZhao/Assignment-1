@@ -65,7 +65,8 @@ public class MailPool implements IMailPool {
             throw e; 
         } 
 	}
-	
+	//TODO: optimise code a little, i.e. robots shouldnt stay waiting if next item is heavy and other robots are
+	//		far away.
 	private void loadRobot(ListIterator<Robot> i) throws ItemTooHeavyException {
 		Robot robot = i.next();
 		assert(robot.isEmpty());
@@ -73,14 +74,51 @@ public class MailPool implements IMailPool {
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			try {
-			robot.addToHand(j.next().mailItem); // hand first as we want higher priority delivered first
-			j.remove();
-			if (pool.size() > 0) {
-				robot.addToTube(j.next().mailItem);
+				MailItem current = j.next().mailItem;
+			if (current.getWeight() <= 2000) {
+				robot.addToHand(current); // hand first as we want higher priority delivered first
 				j.remove();
-			}
-			robot.dispatch(); // send the robot off if it has any items to deliver
-			i.remove();       // remove from mailPool queue
+				if (pool.size() > 0) {
+					MailItem tube = j.next().mailItem;
+					if(tube.getWeight() <= 2000) {
+					robot.addToTube(tube);
+					j.remove();
+					}
+				}
+				robot.dispatch(); // send the robot off if it has any items to deliver
+				i.remove();       // remove from mailPool queue
+			} else if(current.getWeight() > 2000 && current.getWeight() <= 2600) {
+				if(robots.size() >= 2) {
+					robot.setPaired();
+					i.remove();
+					Robot robot2 = i.next();
+					robot2.setPaired();
+					robot.addToHand(current);
+					robot2.addToHand(current);
+					j.remove();
+					robot.dispatch();
+					robot2.dispatch();
+					i.remove();
+				}
+			} else if(current.getWeight() <= 3000 && current.getWeight() > 2600) {
+				if(robots.size() >= 3) {
+					System.out.println("IN A TEAM");
+					robot.setTeamed();
+					i.remove();
+					Robot robot2 = i.next();
+					robot2.setTeamed();
+					Robot robot3 = i.next();
+					robot3.setTeamed();
+					robot.addToHand(current);
+					robot2.addToHand(current);
+					robot3.addToHand(current);
+					j.remove();
+					robot.dispatch();
+					robot2.dispatch();
+					robot3.dispatch();
+					i.remove();
+				}
+			}		
 			} catch (Exception e) { 
 	            throw e; 
 	        } 

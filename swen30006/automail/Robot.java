@@ -24,6 +24,9 @@ public class Robot {
     private int destination_floor;
     private IMailPool mailPool;
     private boolean receivedDispatch;
+    private boolean paired;
+    private boolean teamed;
+    private long stepCounter;
     
     private MailItem deliveryItem = null;
     private MailItem tube = null;
@@ -47,6 +50,9 @@ public class Robot {
         this.mailPool = mailPool;
         this.receivedDispatch = false;
         this.deliveryCounter = 0;
+        this.stepCounter = 0;
+        this.paired = false;
+        this.teamed = false;
     }
     
     public void dispatch() {
@@ -57,6 +63,7 @@ public class Robot {
      * This is called on every time step
      * @throws ExcessiveDeliveryException if robot delivers more than the capacity of the tube without refilling
      */
+    //TODO: stop duplicating items delivered
     public void step() throws ExcessiveDeliveryException {    	
     	switch(current_state) {
     		/** This state is triggered when the robot is returning to the mailroom after a delivery */
@@ -89,7 +96,10 @@ public class Robot {
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! */
                     delivery.deliver(deliveryItem);
+                    //delivery item pairing
                     deliveryItem = null;
+                    this.teamed = false;
+                    this.paired = false;
                     deliveryCounter++;
                     if(deliveryCounter > 2){  // Implies a simulation bug
                     	throw new ExcessiveDeliveryException();
@@ -122,15 +132,29 @@ public class Robot {
     }
 
     /**
-     * Generic function that moves the robot towards the destination
+     * Generic function that moves the robot towards the destination, changes speed depending on whether or not
+     * it is paired/teamed with heavy item.
      * @param destination the floor towards which the robot is moving
      */
     private void moveTowards(int destination) {
-        if(current_floor < destination){
-            current_floor++;
-        } else {
-            current_floor--;
-        }
+    	if(!this.teamed && !this.paired) {
+    		if(current_floor < destination){
+    			current_floor++;
+    		} else {
+    			current_floor--;
+    		}
+    	} else {
+    		if(current_floor < destination && this.stepCounter%3 == 0) {
+    			current_floor++;
+    			this.stepCounter++;
+    		} else if (current_floor > destination && this.stepCounter%3 == 0){
+    			current_floor--;
+    			this.stepCounter++;
+    		} else {
+    			this.stepCounter++;
+    		}
+    		
+    	}
     }
     
     private String getIdTube() {
@@ -174,13 +198,25 @@ public class Robot {
 	public void addToHand(MailItem mailItem) throws ItemTooHeavyException {
 		assert(deliveryItem == null);
 		deliveryItem = mailItem;
-		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT && !this.paired && !this.teamed) throw new ItemTooHeavyException();
 	}
 
 	public void addToTube(MailItem mailItem) throws ItemTooHeavyException {
 		assert(tube == null);
 		tube = mailItem;
 		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+	}
+	/**
+	 * sets paired status of robot to true
+	 */
+	public void setPaired() {
+		this.paired = true;
+	}
+	/**
+	 * sets teamed status of robot to true
+	 */
+	public void setTeamed() {
+		this.teamed = true;
 	}
 
 }
