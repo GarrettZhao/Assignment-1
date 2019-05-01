@@ -27,6 +27,7 @@ public class Robot {
     private boolean paired;
     private boolean teamed;
     private long stepCounter;
+    private boolean leader;
     
     private MailItem deliveryItem = null;
     private MailItem tube = null;
@@ -53,6 +54,7 @@ public class Robot {
         this.stepCounter = 0;
         this.paired = false;
         this.teamed = false;
+        this.leader = false;
     }
     
     public void dispatch() {
@@ -63,7 +65,7 @@ public class Robot {
      * This is called on every time step
      * @throws ExcessiveDeliveryException if robot delivers more than the capacity of the tube without refilling
      */
-    //TODO: stop duplicating items delivered wow
+    //TODO: stop duplicating items delivered
     public void step() throws ExcessiveDeliveryException {    	
     	switch(current_state) {
     		/** This state is triggered when the robot is returning to the mailroom after a delivery */
@@ -95,11 +97,22 @@ public class Robot {
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! */
-                    delivery.deliver(deliveryItem);
-                    //delivery item pairing
+    				delivery.deliver(deliveryItem);
+    				
+    				//TODO: BUG all items don't get delivered, not sure where 
+    				/**
+    				if(this.teamed || this.paired) {
+    					if(this.leader)
+    						delivery.deliver(deliveryItem);
+    				} else 
+    					delivery.deliver(deliveryItem);
+					*/
+    				
+                    //reset delivery item pairing
                     deliveryItem = null;
                     this.teamed = false;
                     this.paired = false;
+                    this.leader = false;
                     deliveryCounter++;
                     if(deliveryCounter > 2){  // Implies a simulation bug
                     	throw new ExcessiveDeliveryException();
@@ -217,6 +230,12 @@ public class Robot {
 	 */
 	public void setTeamed() {
 		this.teamed = true;
+	}
+	/**
+	 * Sets the leader of the team
+	 */
+	public void setLeader() {
+		this.leader = true;
 	}
 
 }

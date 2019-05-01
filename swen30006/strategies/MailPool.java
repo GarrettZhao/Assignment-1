@@ -70,8 +70,8 @@ public class MailPool implements IMailPool {
 	private void loadRobot(ListIterator<Robot> i) throws ItemTooHeavyException {
 		Robot robot = i.next();
 		assert(robot.isEmpty());
-		// System.out.printf("P: %3d%n", pool.size());
 		ListIterator<Item> j = pool.listIterator();
+		
 		if (pool.size() > 0) {
 			try {
 				MailItem current = j.next().mailItem;
@@ -89,7 +89,9 @@ public class MailPool implements IMailPool {
 				i.remove();       // remove from mailPool queue
 			} else if(current.getWeight() > 2000 && current.getWeight() <= 2600) {
 				if(robots.size() >= 2) {
+					/** gets in this state when a pair of robots used to deliver heavy package */
 					robot.setPaired();
+					robot.setLeader();
 					i.remove();
 					Robot robot2 = i.next();
 					robot2.setPaired();
@@ -102,8 +104,9 @@ public class MailPool implements IMailPool {
 				}
 			} else if(current.getWeight() <= 3000 && current.getWeight() > 2600) {
 				if(robots.size() >= 3) {
-					System.out.println("IN A TEAM");
+					/** Gets in this state when a team of robots is available to deliver heavy package */
 					robot.setTeamed();
+					robot.setLeader();
 					i.remove();
 					Robot robot2 = i.next();
 					robot2.setTeamed();

@@ -109,6 +109,8 @@ public class Simulation {
 				System.exit(0);
 			}
             Clock.Tick();
+           //prints out how many items delivered vs how many were generated.
+            System.out.println("Delivered item count: " + MAIL_DELIVERED.size() + " CREATED  "  + mailGenerator.MAIL_TO_CREATE);
         }
         printResults();
     }
