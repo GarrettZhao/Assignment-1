@@ -97,16 +97,15 @@ public class Robot {
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! */
-    				delivery.deliver(deliveryItem);
+    				//delivery.deliver(deliveryItem);
     				
     				//TODO: BUG all items don't get delivered, not sure where 
-    				/**
-    				if(this.teamed || this.paired) {
-    					if(this.leader)
+    				
+    				if((this.teamed || this.paired) && this.leader) {
     						delivery.deliver(deliveryItem);
-    				} else 
-    					delivery.deliver(deliveryItem);
-					*/
+    				} else if(!this.teamed && !this.paired)
+    						delivery.deliver(deliveryItem);
+					
     				
                     //reset delivery item pairing
                     deliveryItem = null;

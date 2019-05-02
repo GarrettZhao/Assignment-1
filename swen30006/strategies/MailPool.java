@@ -10,7 +10,7 @@ import automail.Robot;
 import exceptions.ItemTooHeavyException;
 
 public class MailPool implements IMailPool {
-
+	private int nrobots;
 	private class Item {
 		int priority;
 		int destination;
@@ -48,6 +48,7 @@ public class MailPool implements IMailPool {
 		// Start empty
 		pool = new LinkedList<Item>();
 		robots = new LinkedList<Robot>();
+		this.nrobots = nrobots;
 	}
 
 	public void addToPool(MailItem mailItem) {
@@ -71,6 +72,7 @@ public class MailPool implements IMailPool {
 		Robot robot = i.next();
 		assert(robot.isEmpty());
 		ListIterator<Item> j = pool.listIterator();
+		//System.out.println("Pool Size:  " + pool.size());
 		
 		if (pool.size() > 0) {
 			try {
@@ -87,8 +89,9 @@ public class MailPool implements IMailPool {
 				}
 				robot.dispatch(); // send the robot off if it has any items to deliver
 				i.remove();       // remove from mailPool queue
-			} else if(current.getWeight() > 2000 && current.getWeight() <= 2600) {
-				if(robots.size() >= 2) {
+				
+			} else if(current.getWeight() > 2000 && current.getWeight() <= 2600 && robots.size() >= 2) {
+					System.out.println("HEAVY LOOP");
 					/** gets in this state when a pair of robots used to deliver heavy package */
 					robot.setPaired();
 					robot.setLeader();
@@ -101,9 +104,9 @@ public class MailPool implements IMailPool {
 					robot.dispatch();
 					robot2.dispatch();
 					i.remove();
-				}
-			} else if(current.getWeight() <= 3000 && current.getWeight() > 2600) {
-				if(robots.size() >= 3) {
+
+			} else if(current.getWeight() <= 3000 && current.getWeight() > 2600 && robots.size() >= 3) {
+					System.out.println("HEAVY LOOP");
 					/** Gets in this state when a team of robots is available to deliver heavy package */
 					robot.setTeamed();
 					robot.setLeader();
@@ -120,8 +123,9 @@ public class MailPool implements IMailPool {
 					robot2.dispatch();
 					robot3.dispatch();
 					i.remove();
-				}
-			}		
+			} else if ((current.getWeight()> 2600 && nrobots < 3) || (current.getWeight() > 2000 && nrobots < 2) || current.getWeight() > 3000)
+				throw new ItemTooHeavyException();
+			
 			} catch (Exception e) { 
 	            throw e; 
 	        } 
