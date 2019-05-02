@@ -104,8 +104,7 @@ public class Robot {
     				if((this.teamed || this.paired) && this.leader) {
     						delivery.deliver(deliveryItem);
     				} else if(!this.teamed && !this.paired)
-    						delivery.deliver(deliveryItem);
-					
+    						delivery.deliver(deliveryItem);					
     				
                     //reset delivery item pairing
                     deliveryItem = null;

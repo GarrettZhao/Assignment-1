@@ -3,9 +3,12 @@ package automail;
 import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
 import exceptions.MailAlreadyDeliveredException;
+import exceptions.OverWeightLimitException;
 import strategies.Automail;
 import strategies.IMailPool;
 import strategies.MailPool;
+import strategies.PairMailPool;
+import strategies.TeamMailPool;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,7 +29,7 @@ public class Simulation {
     private static ArrayList<MailItem> MAIL_DELIVERED;
     private static double total_score = 0;
 
-    public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, OverWeightLimitException  {
     	Properties automailProperties = new Properties();
 		// Default properties
     	// automailProperties.setProperty("Robots", "Big,Careful,Standard,Weak");
@@ -70,8 +73,16 @@ public class Simulation {
 		System.out.print("Robots: "); System.out.println(robots);
 		assert(robots > 0);
 		// MailPool
-		IMailPool mailPool = new MailPool(robots);
-
+		IMailPool mailPool;
+		if(MAIL_MAX_WEIGHT <= Robot.INDIVIDUAL_MAX_WEIGHT) {
+			mailPool = new MailPool(robots);
+		} else if (MAIL_MAX_WEIGHT <= Robot.PAIR_MAX_WEIGHT) {
+			mailPool = new PairMailPool(robots);
+		} else if (MAIL_MAX_WEIGHT <= Robot.TRIPLE_MAX_WEIGHT) {
+			mailPool = new TeamMailPool(robots);
+		} else {
+			throw new OverWeightLimitException();
+		}
 		// End properties
 		
         MAIL_DELIVERED = new ArrayList<MailItem>();

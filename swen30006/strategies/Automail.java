@@ -8,9 +8,7 @@ public class Automail {
     public Robot[] robots;
     public IMailPool mailPool;
     
-    public Automail(IMailPool mailPool, IMailDelivery delivery, int numRobots) {
-    	// Swap between simple provided strategies and your strategies here
-    	    	
+    public Automail(IMailPool mailPool, IMailDelivery delivery, int numRobots) {    	    	
     	/** Initialize the MailPool */
     	
     	this.mailPool = mailPool;

@@ -9,7 +9,7 @@ import automail.PriorityMailItem;
 import automail.Robot;
 import exceptions.ItemTooHeavyException;
 
-public class MailPool implements IMailPool {
+public class TeamMailPool implements IMailPool {
 	private int nrobots;
 	private class Item {
 		int priority;
@@ -44,7 +44,7 @@ public class MailPool implements IMailPool {
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
 
-	public MailPool(int nrobots){
+	public TeamMailPool(int nrobots){
 		// Start empty
 		pool = new LinkedList<Item>();
 		robots = new LinkedList<Robot>();
@@ -89,7 +89,41 @@ public class MailPool implements IMailPool {
 				robot.dispatch(); // send the robot off if it has any items to deliver
 				i.remove();       // remove from mailPool queue
 				
-			}  else if ((current.getWeight() > Robot.PAIR_MAX_WEIGHT && nrobots < 3) || (current.getWeight() > Robot.INDIVIDUAL_MAX_WEIGHT && nrobots < 2) || current.getWeight() > Robot.TRIPLE_MAX_WEIGHT)
+			} else if (current.getWeight() > Robot.INDIVIDUAL_MAX_WEIGHT && current.getWeight() <= Robot.PAIR_MAX_WEIGHT && robots.size() >= 2) {
+					/** gets in this state when a pair of robots used to deliver heavy package */
+					robot.setPaired();
+					robot.setLeader();
+					i.remove();
+					Robot robot2 = i.next();
+					robot2.setPaired();
+					robot.addToHand(current);
+					robot2.addToHand(current);
+					j.remove();
+					robot.dispatch();
+					robot2.dispatch();
+					i.remove();
+
+			} else if(current.getWeight() <= Robot.TRIPLE_MAX_WEIGHT && current.getWeight() > Robot.PAIR_MAX_WEIGHT && robots.size() >= 3) {
+					/** Gets in this state when a team of robots is available to deliver heavy package */
+					//TODO: Fix bug with leaders
+					robot.setTeamed();
+					robot.setLeader();
+					i.remove();
+					Robot robot2 = i.next();
+					robot2.setTeamed();
+					robot2.setLeader();
+					Robot robot3 = i.next();
+					robot3.setTeamed();
+					robot.addToHand(current);
+					robot2.addToHand(current);
+					robot3.addToHand(current);
+					robot3.setLeader();
+					j.remove();
+					robot.dispatch();
+					robot2.dispatch();
+					robot3.dispatch();
+					i.remove();
+			} else if ((current.getWeight() > Robot.PAIR_MAX_WEIGHT && nrobots < 3) || (current.getWeight() > Robot.INDIVIDUAL_MAX_WEIGHT && nrobots < 2) || current.getWeight() > Robot.TRIPLE_MAX_WEIGHT)
 				throw new ItemTooHeavyException();
 			
 			} catch (Exception e) { 
