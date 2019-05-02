@@ -7,11 +7,13 @@ import exceptions.MailAlreadyDeliveredException;
 public class DeliveryReport implements IMailDelivery {
 	
 	private double total_score;
+	private static double penalty;
 	private static ArrayList<MailItem> mailDelivered;
 	
-	public DeliveryReport() {
+	public DeliveryReport(double penalty) {
 		total_score = 0;
 		mailDelivered = new ArrayList<MailItem>();
+		this.penalty = penalty;
 	}
 	
 	/** Confirm the delivery and calculate the total score */
@@ -36,7 +38,6 @@ public class DeliveryReport implements IMailDelivery {
 
 	private static double calculateDeliveryScore(MailItem deliveryItem) {
 		// Penalty for longer delivery times
-		final double penalty = 1.2;
 		double priority_weight = 0;
 		// Take (delivery time - arrivalTime)**penalty * (1+sqrt(priority_weight))
 		if(deliveryItem instanceof PriorityMailItem){

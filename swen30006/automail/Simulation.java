@@ -33,6 +33,7 @@ public class Simulation {
     	automailProperties.setProperty("Robots", "Standard");
     	automailProperties.setProperty("MailPool", "strategies.SimpleMailPool");
     	automailProperties.setProperty("Floors", "10");
+    	automailProperties.setProperty("Delivery_Penalty", "1.1");
     	automailProperties.setProperty("Fragile", "false");
     	automailProperties.setProperty("Mail_to_Create", "80");
     	automailProperties.setProperty("Last_Delivery_Time", "100");
@@ -56,10 +57,13 @@ public class Simulation {
         // Fragile
         boolean fragile = Boolean.parseBoolean(automailProperties.getProperty("Fragile"));
         System.out.printf("Fragile: %5b%n", fragile);
+        // Penalty
+        double penalty = Double.parseDouble(automailProperties.getProperty("Delivery_Penalty"));
+        System.out.printf("Fragile: %5b%n", penalty);
 		// Mail_to_Create
 		MAIL_TO_CREATE = Integer.parseInt(automailProperties.getProperty("Mail_to_Create"));
         System.out.printf("Mail_to_Create: %5d%n", MAIL_TO_CREATE);
-        // Mail_to_Create
+        // Mail_Max_Weight
      	MAIL_MAX_WEIGHT = Integer.parseInt(automailProperties.getProperty("Mail_Max_Weight"));
         System.out.printf("Mail_Max_Weight: %5d%n", MAIL_MAX_WEIGHT);
 		// Last_Delivery_Time
@@ -82,7 +86,7 @@ public class Simulation {
 		}
 		
 		/** Clas that handles reporting of delivery */
-		DeliveryReport delivery  = new DeliveryReport();
+		DeliveryReport delivery  = new DeliveryReport(penalty);
 		// End properties
 		                
         /** Used to see whether a seed is initialized or not */
