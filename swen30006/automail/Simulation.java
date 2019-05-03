@@ -33,7 +33,7 @@ public class Simulation {
     	automailProperties.setProperty("Robots", "Standard");
     	automailProperties.setProperty("MailPool", "strategies.SimpleMailPool");
     	automailProperties.setProperty("Floors", "10");
-    	automailProperties.setProperty("Delivery_Penalty", "1.1");
+    	automailProperties.setProperty("Delivery_Penalty", "1.2");
     	automailProperties.setProperty("Fragile", "false");
     	automailProperties.setProperty("Mail_to_Create", "80");
     	automailProperties.setProperty("Last_Delivery_Time", "100");
