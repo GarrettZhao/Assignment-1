@@ -75,15 +75,16 @@ public class Simulation {
 		assert(robots > 0);
 		// MailPool
 		IMailPool mailPool;
-		if(MAIL_MAX_WEIGHT <= Robot.INDIVIDUAL_MAX_WEIGHT) {
-			mailPool = new MailPool(robots);
-		} else if (MAIL_MAX_WEIGHT <= Robot.PAIR_MAX_WEIGHT) {
-			mailPool = new PairMailPool(robots);
-		} else if (MAIL_MAX_WEIGHT <= Robot.TRIPLE_MAX_WEIGHT) {
-			mailPool = new TeamMailPool(robots);
-		} else {
-			throw new OverWeightLimitException();
-		}
+		mailPool = new TeamMailPool(robots);
+//		if(MAIL_MAX_WEIGHT <= Robot.INDIVIDUAL_MAX_WEIGHT) {
+//			mailPool = new MailPool(robots);
+//		} else if (MAIL_MAX_WEIGHT <= Robot.PAIR_MAX_WEIGHT) {
+//			mailPool = new PairMailPool(robots);
+//		} else if (MAIL_MAX_WEIGHT <= Robot.TRIPLE_MAX_WEIGHT) {
+//			mailPool = new TeamMailPool(robots);
+//		} else {
+//			throw new OverWeightLimitException();
+//		}
 		
 		/** Clas that handles reporting of delivery */
 		DeliveryReport delivery  = new DeliveryReport(penalty);
