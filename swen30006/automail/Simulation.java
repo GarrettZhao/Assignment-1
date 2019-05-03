@@ -59,7 +59,6 @@ public class Simulation {
         System.out.printf("Fragile: %5b%n", fragile);
         // Penalty
         double penalty = Double.parseDouble(automailProperties.getProperty("Delivery_Penalty"));
-        System.out.printf("Fragile: %5b%n", penalty);
 		// Mail_to_Create
 		MAIL_TO_CREATE = Integer.parseInt(automailProperties.getProperty("Mail_to_Create"));
         System.out.printf("Mail_to_Create: %5d%n", MAIL_TO_CREATE);
